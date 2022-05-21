@@ -9,12 +9,11 @@ def get_args():
     parser.add_argument('-j', "--json", required=True, help='input json file')
     parser.add_argument('-i', "--input", default="input", help='input images directory')
     parser.add_argument('-o', "--output", default="output", help='output masks directory')
-    parser.add_argument('-s', "--image_sizes", default=None, help="dict with image sizes")
     args = parser.parse_args()
 
-    return args.json, args.input, args.output, args.image_sizes	
+    return args.json, args.input, args.output			
 
-def main(json_path, input_directory, output_directory, image_sizes):
+def main(json_path, input_directory, output_directory):
     # Open JSON file
     with open(json_path) as f:
         via_json = json.load(f)
@@ -36,11 +35,8 @@ def main(json_path, input_directory, output_directory, image_sizes):
         image_path = os.path.join(input_directory, image_file_name)
 
         # Get original image size
-        if image_sizes is None:
-            with Image.open(image_path) as im:
-                image_size = im.size
-        else:
-            image_size = image_sizes[image_path]
+        with Image.open(image_path) as im:
+            image_size = im.size
 
         # Create numpy array with same size
         mask_array = np.zeros((image_size[1], image_size[0]))
@@ -58,5 +54,5 @@ def main(json_path, input_directory, output_directory, image_sizes):
         mask.save(output_mask_path)
 
 if __name__ == "__main__":
-    json_path, input_directory, output_directory, image_sizes = get_args()
-    main(json_path, input_directory, output_directory, image_sizes)
+    json_path, input_directory, output_directory = get_args()
+    main(json_path, input_directory, output_directory)
